@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ML Canvas — churn Telco (Tech Challenge Fase 1)</title>
+  <style>
+    :root {
+      --bg: #f4f7fc;
+      --card: #ffffff;
+      --head-pred: #e8d4d4;
+      --head-data: #d4e4f0;
+      --border: #c5d3e8;
+      --text: #1a1a2e;
+      --muted: #4a5568;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+    .intro {
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+    .intro a { color: #2b6cb0; }
+    .grid-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    @media (min-width: 800px) {
+      .grid-top { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .box h2 {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.5rem 0.75rem;
+      background: var(--head-pred);
+      border-bottom: 1px solid var(--border);
+    }
+    .box.data h2 { background: var(--head-data); }
+    .box .body {
+      padding: 0.75rem 0.85rem;
+    }
+    .box .body p { margin: 0 0 0.65rem; }
+    .box .body p:last-child { margin-bottom: 0; }
+    .box .sub { font-style: italic; color: var(--muted); font-weight: normal; text-transform: none; letter-spacing: 0; }
+    ul { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+    li { margin-bottom: 0.35rem; }
+    .wide {
+      margin-top: 0.75rem;
+    }
+    .wide .box h2 { font-size: 0.72rem; }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    code {
+      font-size: 0.88em;
+      background: #edf2f7;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>ML Canvas — churn Telco</h1>
+    <p class="intro">
+      Tech Challenge · Fase 1. Caixas no espírito do
+      <a href="https://www.ownml.co/machine-learning-canvas">Machine Learning Canvas</a>
+      (Louis Dorard / OWNML). Texto canônico em <code>ml_canvas.md</code>; quem mudar um arquivo alinha o outro para o grupo não ler versões diferentes.
+    </p>
+
+    <div class="grid-top">
+      <article class="box">
+        <h2>End-user <span class="sub">quem usa / quem é afetado</span></h2>
+        <div class="body">
+          <p>Direção e dono de produto querem menos churn sem estourar o orçamento de campanhas. Marketing e CRM querem listas priorizadas e mensagens que não chateiem quem não ia sair. Operações e <em>call center</em> precisam de filas realistas — não dá para tratar sete mil pessoas na mesma semana. A equipe de dados entrega <em>pipeline</em>, MLflow e API. Jurídico só faria falta em produção com dados reais; aqui é exercício com dataset público.</p>
+        </div>
+      </article>
+      <article class="box">
+        <h2>Value proposition <span class="sub">o que fazemos pelos usuários</span></h2>
+        <div class="body">
+          <p>A operadora perde clientes por cancelamento. Retenção costuma ser mais barata que aquisição, por isso o valor do sistema é <strong>priorizar</strong> quem tem mais probabilidade de sair, para concentrar contatos ou ofertas onde o retorno compensa, em vez de ir à sorte na base toda.</p>
+          <p>O modelo deve produzir <strong>risco de churn</strong> (probabilidade ou classe) para alimentar CRM ou filas de <em>call center</em>, com revisão humana nos casos limítrofes (regra de negócio a fechar).</p>
+          <p>O Excel não traz insatisfação subjetiva, falhas de rede ou mudança de cidade — o modelo trabalha com o que há.</p>
+        </div>
+      </article>
+      <article class="box data">
+        <h2>Data sources <span class="sub">de onde vêm os dados</span></h2>
+        <div class="body">
+          <ul>
+            <li>Arquivo <code>data/raw/Telco_customer_churn.xlsx</code> no repositório (IBM-style Telco churn, uso acadêmico).</li>
+            <li>Em uma operadora real entrariam bases internas de <em>billing</em>, CRM e possivelmente APIs de terceiros; não é o nosso caso neste challenge.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box">
+        <h2>Problem <span class="sub">especificação do motor de predição</span></h2>
+        <div class="body">
+          <p><strong>Pergunta que o modelo responde:</strong> este cliente tende a cancelar nos próximos tempos (no sentido captado pelo rótulo histórico <code>Churn Label</code>)?</p>
+          <p><strong>Entrada (<em>input</em>):</strong> linha de cliente com variáveis tabulares (serviços, contrato, cobranças, <em>tenure</em>, etc.), no <em>schema</em> fechado depois do <em>pipeline</em> (o que fica de fora, o que é numérico, o que vai a <em>one-hot</em>).</p>
+          <p><strong>Saídas possíveis:</strong> probabilidade de churn ou etiqueta Yes / No conforme um <strong>limiar</strong> ligado ao custo FP/FN (ver Performance evaluation).</p>
+          <p><strong>Tipo de problema:</strong> classificação binária supervisionada.</p>
+          <p><strong><em>Baseline</em> simples (alternativa ao ML):</strong> regras manuais do tipo “contrato <em>month-to-month</em> e <em>tenure</em> baixo → risco alto”, ou previsão constante (<em>Dummy</em>); no código: <code>DummyClassifier</code> e regressão logística antes da MLP.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box data">
+        <h2>Data preparation <span class="sub">treino e features</span></h2>
+        <div class="body">
+          <p>Ordem de grandeza: <strong>~7k linhas</strong>, <strong>30+ colunas</strong> — volume modesto, mas dá para treinar e comparar modelos sem drama. Alvo: <code>Churn Label</code> (Yes / No); no EDA a classe Yes rondava <strong>cerca de um quarto</strong> da base (desequilibrada, mas não raríssima). Vale medir de novo depois de tratarmos as linhas em que <code>Total Charges</code> não convertia para número (poucas, mas não zero).</p>
+          <p><strong>Features:</strong> serviços, contrato, encargos, <em>tenure</em>, composição do agregado, etc. <strong>Cuidado com <em>leakage</em>:</strong> <code>Churn Score</code>, <code>CLTV</code>, <code>Churn Reason</code> cheiram a informação <em>post hoc</em> — o default do grupo é <strong>não usar</strong> como <em>input</em> até alguém confirmar o <em>timing</em> em documentação de negócio.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box">
+        <h2>Performance evaluation <span class="sub">como medimos sucesso</span></h2>
+        <div class="body">
+          <p>Valores fechados (razão FP/FN, limiar, métricas): <strong><code>docs/metricas_e_limiar.md</code></strong>. Aqui fica o resumo.</p>
+          <p><strong>Métricas de negócio (<em>bottom-line</em>, a quantificar):</strong> custo de <strong>falso negativo</strong> (perdemos a retenção) vs. <strong>falso positivo</strong> (contato inútil, desgaste). Sem contabilidade fina no enunciado, usamos <strong>razões</strong> FP:FN plausíveis (ex.: “1 FN custa o dobro de 1 FP”) e documentamos no <em>Model Card</em>. <em>Accuracy</em> sozinha não conta — com muitos No na base dá para parecer bom sem aprender.</p>
+          <p><strong>Métricas de precisão da predição:</strong> ROC-AUC para comparar entre si; PR-AUC e F1 na classe Yes (classe minoria); Brier só se formos usar a probabilidade para cortes finos.</p>
+          <p><strong>Avaliação <em>offline</em>:</strong> validação cruzada <strong>estratificada</strong>, <em>seed</em> fixo, mesma lógica para baselines e para a MLP mais tarde.</p>
+          <p><strong>Em produção (rascunho):</strong> taxa de churn entre clientes de alto risco, estabilidade das distribuições de <em>features</em> (<em>drift</em>), predições falhadas — encaixa no plano de monitoramento que ainda vamos fechar no fim do trabalho.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box">
+        <h2>Using predictions <span class="sub">integração</span></h2>
+        <div class="body">
+          <p><strong>Quando e quantas:</strong> batch diário ou sob pedido; o challenge inclui FastAPI, por isso o desenho principal é <strong>sob pedido</strong>.</p>
+          <p><strong>Restrição de tempo:</strong> <em>p95</em> do <code>POST /predict</code> na ordem de <strong>meio segundo</strong> com <em>payload</em> típico; <em>cold start</em> documentado se for relevante.</p>
+          <p><strong>Uso de predições e confiança:</strong> filas por <em>score</em> decrescente; limiar ajustável quando o custo FP/FN mudar.</p>
+          <p><strong>Sem predição a tempo:</strong> <em>fallback</em> (regra simples ou “não priorizar”) — detalhar no desenho da API.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box data">
+        <h2>Learning models <span class="sub">treino e deploy</span></h2>
+        <div class="body">
+          <p><strong>Quando treinar ou refrescar:</strong> após janelas de dados fechadas ou quando o <em>drift</em> passar um limiar; no trabalho nos focamos numa versão entregável.</p>
+          <p><strong>Tempo de treino:</strong> aceitável em minutos neste volume; MLP com GPU opcional.</p>
+          <p><strong>Critério para “subir” modelo:</strong> melhoria clara em PR-AUC ou F1 no Yes em relação ao <em>baseline</em> logístico, sem degradação grave na matriz de confusão ao limiar escolhido; MLflow com <em>commit</em> Git e referência ao arquivo de dados.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box">
+        <h2>Riscos e limitações</h2>
+        <div class="body">
+          <p>Base histórica pode não representar novos produtos ou regiões. Quem atende o telefone vai querer saber <strong>por que</strong> o cliente ficou marcado como risco — um <em>score</em> sozinho não chega; mais tarde pode ser preciso importância de variáveis (há quem use SHAP) ou regras simples por canal, se o negócio pedir. Os dados do exercício trazem identificadores e endereço; num cenário real entraria legislação de proteção de dados (LGPD / GDPR) e minimização de dados.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="wide">
+      <article class="box">
+        <h2>Próximos passos do grupo</h2>
+        <div class="body">
+          <ol>
+            <li>Números de custo FP/FN e limiar — ver <code>docs/metricas_e_limiar.md</code>.</li>
+            <li><em>Dummy</em> + regressão logística, CV, MLflow — notebook <code>02_baselines_mlflow.ipynb</code>.</li>
+            <li>MLP PyTorch, comparação com pelo menos quatro métricas, trade-off FP/FN, runs no MLflow.</li>
+            <li>Refatoração <code>src/</code>, API, testes, documentação, vídeo; <em>deploy</em> em nuvem se couber no tempo.</li>
+          </ol>
+        </div>
+      </article>
+    </div>
+
+    <footer>
+      Dataset e EDA: <code>data/raw/Telco_customer_churn.xlsx</code> · <code>notebooks/01_eda_telco_churn.ipynb</code>.
+      Abra este arquivo HTML diretamente no navegador (dois cliques ou arrastar para o Chrome/Edge).
+    </footer>
+  </div>
+</body>
+</html>

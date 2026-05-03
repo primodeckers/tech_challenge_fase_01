@@ -1,0 +1,75 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Materiais da pós (se copiados para dentro do repositório)
+pos-tech-fiap/
+
+# PDFs
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testes e qualidade
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.ruff_cache/
+.mypy_cache/
+
+# ML / experimentos locais
+mlruns/
+wandb/
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.onnx
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Scripts de apoio só em máquina local (não versionar)
+scripts/apply_eda_interpretations.py
+scripts/build_baselines_notebook.py
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Variáveis de ambiente (segredos)
+.env
+.env.*
+!.env.example
+
+# Dados brutos: ignorar tudo em data/raw exceto o dataset acordado
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/Telco_customer_churn.xlsx

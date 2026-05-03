@@ -1,0 +1,8 @@
+# Instalar na raiz do repositório (onde está este arquivo):
+#   pip install -r requirements.txt
+#
+# Isto instala o projeto em modo editável com extras de desenvolvimento
+# (Jupyter, pytest, ruff, pandera). O notebook de EDA usa matplotlib/seaborn,
+# já incluídos nas dependências principais do pyproject.toml.
+
+-e .[dev]
