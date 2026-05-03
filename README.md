@@ -66,6 +66,24 @@ Para ver bonito: na raiz, com venv, `mlflow ui` e abra o link que aparecer (muit
 
 Abra `notebooks/03_mlp_mlflow.ipynb` e rode as células. O experimento MLflow chama-se `telco_churn_mlp` (compare com `telco_churn_baselines`). Treino em GPU se o PyTorch detectar CUDA; senão usa CPU.
 
+## API (FastAPI)
+
+Gera o artefato do **pipeline logístico** (regressão + pré-processamento igual ao dos notebooks) e sobe o servidor:
+
+```bash
+python scripts/export_logistic_artifact.py
+uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
+```
+
+`pipeline.joblib` e `meta.json` vão para `models/churn_api/` por padrão (estão no `.gitignore`; cada clone do repo precisa gerar de novo ou copiar).
+
+- **`GET /health`** — `model_loaded` diz se o modelo foi encontrado ao arrancar.
+- **`POST /predict`** — corpo JSON com **todas** as colunas de entrada de uma linha de cliente; resposta com `probability_churn`, `threshold` (do `config`) e `predicted_churn`.
+
+Outra pasta: variável de ambiente **`CHURN_ARTIFACT_DIR`** a apontar para o diretório que tem `pipeline.joblib` e `meta.json`.
+
+Testes da API: `pytest tests/test_api.py`.
+
 ## Dataset
 
 `data/raw/Telco_customer_churn.xlsx` (Telco / IBM, uso acadêmico).

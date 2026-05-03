@@ -134,9 +134,7 @@ def train_churn_mlp(
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    train_loader = _numpy_to_loader(
-        Xt_train, y_train, batch_size=batch_size, shuffle=True
-    )
+    train_loader = _numpy_to_loader(Xt_train, y_train, batch_size=batch_size, shuffle=True)
 
     history: dict[str, list[float]] = {
         "train_loss": [],
@@ -175,9 +173,7 @@ def train_churn_mlp(
 
         if mval["average_precision"] > best_ap:
             best_ap = mval["average_precision"]
-            best_state = {
-                k: v.detach().cpu().clone() for k, v in model.state_dict().items()
-            }
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
             best_epoch = epoch + 1
             epochs_no_improve = 0
         else:

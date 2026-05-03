@@ -1,4 +1,4 @@
-.PHONY: install install-dev lint lint-fix test
+.PHONY: install install-dev lint lint-fix test export-model serve
 
 install:
 	python -m pip install -U pip
@@ -18,3 +18,9 @@ lint-fix:
 
 test:
 	pytest
+
+export-model:
+	python scripts/export_logistic_artifact.py
+
+serve:
+	uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
