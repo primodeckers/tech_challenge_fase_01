@@ -1,6 +1,6 @@
 # Tech Challenge — Fase 1 (Produtização de modelos)
 
-Churn em telecom: baselines no sklearn, depois MLP em PyTorch, MLflow para não perder os experimentos, e FastAPI no fim — é o desenho do Tech Challenge.
+Projeto de churn em telecom no ritmo do challenge: primeiro EDA e baselines no sklearn com MLflow, depois uma MLP em PyTorch também registrada no MLflow, e por fim uma API FastAPI que serve o pipeline logístico (mesmo pré-processamento dos notebooks). Documentação extra está em `docs/` — canvas, métricas/limiar e um model card enxuto.
 
 ## Requisitos
 
@@ -37,7 +37,7 @@ Se o notebook de EDA ficar com outputs enormes, no Jupyter use “Clear all outp
 | `models/` | Modelos guardados |
 | `notebooks/` | EDA (`01_...`), baselines (`02_...`), MLP PyTorch (`03_...`) |
 | `tests/` | `pytest` |
-| `docs/` | Canvas (`ml_canvas.md` / `.html`), métricas (`metricas_e_limiar.md`), Model Card mais tarde |
+| `docs/` | Canvas (`ml_canvas.md` / `.html`), métricas (`metricas_e_limiar.md`), model card (`model_card.md`) |
 | `pyproject.toml` | Dependências, ruff, pytest |
 | `requirements.txt` | Atalho `pip install -r ...` |
 
@@ -83,6 +83,8 @@ uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
 - **`GET /docs`** — Swagger UI para experimentar o `POST /predict`.
 
 Outra pasta: variável de ambiente **`CHURN_ARTIFACT_DIR`** a apontar para o diretório que tem `pipeline.joblib` e `meta.json`.
+
+Para testar o `POST /predict`, o corpo precisa ter as mesmas colunas que o Excel (sem `Churn Label`). Um jeito rápido é copiar os valores de uma linha do dataset para um JSON — o Swagger em `/docs` ajuda a montar.
 
 Testes da API: `pytest tests/test_api.py`.
 

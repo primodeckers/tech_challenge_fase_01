@@ -25,3 +25,5 @@ O *logit* (e mais tarde a MLP) pode dar **probabilidade** de churn. Começamos c
 ## MLflow e código
 
 Nos notebooks `02_baselines_mlflow.ipynb` e `03_mlp_mlflow.ipynb` já vão alguns *params* com estes números (`cost_fn_relative`, `cost_fp_relative`, `threshold_start`, etc.) e a métrica **`f1_at_threshold_start`** (F1 na classe churn com probabilidades *out-of-fold* e o limiar `THRESHOLD_START` do `config.py`). O *seed* e os *folds* estão no `src/churn_prediction/config.py` para não ficar com número mágico espalhado.
+
+A API (`POST /predict`) usa o mesmo limiar para montar `predicted_churn`: lê `THRESHOLD_START` do código no arranque do servidor (não está embutido no `meta.json`). Se mudarem o limiar no `config.py`, reiniciem o `uvicorn` para refletir na API.

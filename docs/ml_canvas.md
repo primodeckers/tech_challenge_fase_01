@@ -97,7 +97,9 @@ Base histórica pode não representar novos produtos ou regiões. Quem atende o 
 
 ## Próximos passos do grupo
 
-1. **Feito:** custo FP/FN e limiar escritos em `docs/metricas_e_limiar.md`.  
-2. *Dummy* + regressão logística, CV estratificada, *seeds*; MLflow (`02_baselines_mlflow.ipynb`).  
-3. **Feito (base):** MLP PyTorch com early stopping, métricas no holdout e MLflow (`03_mlp_mlflow.ipynb`, `src/churn_prediction/mlp.py`). Falta fechar comparação escrita FP/FN no relatório e eventual *fine-tuning*.  
-4. **Em curso:** API FastAPI (`churn_prediction.api.app`), export do pipeline logístico, testes HTTP. Falta Model Card, vídeo e *deploy* opcional.
+1. **Feito:** custo FP/FN e limiar em `docs/metricas_e_limiar.md`.  
+2. **Feito:** baselines (*Dummy* + logística), CV, MLflow — `02_baselines_mlflow.ipynb`.  
+3. **Feito (base):** MLP PyTorch com early stopping e MLflow — `03_mlp_mlflow.ipynb` / `src/churn_prediction/mlp.py`. Ainda falta texto de comparação FP/FN no relatório e, se der tempo, mais uma rodada de hiperparâmetros.  
+4. **Feito:** export do pipeline logístico (`scripts/export_logistic_artifact.py`), API FastAPI com `/`, `/health`, `/predict`, testes em `tests/test_api.py`.  
+5. **Model Card** esboço em `docs/model_card.md` — revisar com os números finais do relatório.  
+6. **Pendente:** vídeo STAR e *deploy* opcional (Docker/cloud), conforme o enunciado.
