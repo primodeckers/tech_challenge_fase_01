@@ -1,9 +1,0 @@
----
-description: Tom humano na documentação e notebooks do Tech Challenge (churn Telco)
-globs: docs/**, README.md, notebooks/**/*.ipynb
----
-
-- Escrever em português com voz de grupo/projeto, não de brochura nem de *checklist* automático. README e notebooks podem ser mais falados; menos negrito em cada frase.
-- Evitar frases-feitas de modelo genérico (“é crucial”, “robustez”, “soluções inovadoras”, “importante notar”, “neste contexto”).
-- Evitar o substantivo **explicabilidade**; preferir “perceber por que o modelo marcou risco”, “justificar o *score* a quem atende o cliente”, “dizer ao operador o que pesou na decisão”. SHAP ou regras só como exemplos, não como buzzword obrigatório.
-- Manter `docs/ml_canvas.md` e `docs/ml_canvas.html` alinhados quando um deles mudar.

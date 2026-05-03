@@ -56,7 +56,8 @@ wandb/
 scripts/apply_eda_interpretations.py
 scripts/build_baselines_notebook.py
 
-# OS / IDE
+# OS / IDE / Cursor (regras locais, não versionar)
+.cursor/
 .DS_Store
 Thumbs.db
 .idea/
