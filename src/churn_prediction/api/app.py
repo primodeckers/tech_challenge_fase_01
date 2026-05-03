@@ -42,6 +42,20 @@ def create_app(*, artifact_dir: Path | None = None) -> FastAPI:
         lifespan=lifespan,
     )
 
+    @app.get("/")
+    def root() -> dict[str, Any]:
+        """Raiz só orienta: as rotas úteis são /health e POST /predict."""
+        return {
+            "service": "churn_prediction",
+            "message": "Use GET /health ou POST /predict. Documentação interativa em /docs.",
+            "links": {
+                "health": "/health",
+                "predict": "POST /predict",
+                "docs": "/docs",
+                "openapi": "/openapi.json",
+            },
+        }
+
     @app.get("/health")
     def health() -> dict[str, Any]:
         loaded = pred_holder["p"] is not None

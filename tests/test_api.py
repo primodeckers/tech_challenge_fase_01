@@ -14,6 +14,16 @@ from churn_prediction.artifacts import export_logistic_artifact
 DATA_FILE = Path(__file__).resolve().parents[1] / "data" / "raw" / "Telco_customer_churn.xlsx"
 
 
+def test_root(tmp_path: Path) -> None:
+    app = create_app(artifact_dir=tmp_path)
+    with TestClient(app) as client:
+        r = client.get("/")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["service"] == "churn_prediction"
+    assert body["links"]["health"] == "/health"
+
+
 def test_health_sem_modelo(tmp_path: Path) -> None:
     app = create_app(artifact_dir=tmp_path)
     with TestClient(app) as client:

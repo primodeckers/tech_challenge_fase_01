@@ -77,8 +77,10 @@ uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
 
 `pipeline.joblib` e `meta.json` vão para `models/churn_api/` por padrão (estão no `.gitignore`; cada clone do repo precisa gerar de novo ou copiar).
 
+- **`GET /`** — resumo e *links* (`/health`, `/docs`, etc.).
 - **`GET /health`** — `model_loaded` diz se o modelo foi encontrado ao arrancar.
 - **`POST /predict`** — corpo JSON com **todas** as colunas de entrada de uma linha de cliente; resposta com `probability_churn`, `threshold` (do `config`) e `predicted_churn`.
+- **`GET /docs`** — Swagger UI para experimentar o `POST /predict`.
 
 Outra pasta: variável de ambiente **`CHURN_ARTIFACT_DIR`** a apontar para o diretório que tem `pipeline.joblib` e `meta.json`.
 
