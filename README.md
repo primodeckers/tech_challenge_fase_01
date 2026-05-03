@@ -66,10 +66,6 @@ Para ver bonito: na raiz, com venv, `mlflow ui` e abra o link que aparecer (muit
 
 `data/raw/Telco_customer_churn.xlsx` (Telco / IBM, uso acadêmico).
 
-## Onde estamos
-
-Estrutura do repo e dados: ok. Já temos EDA, canvas, e os números de métricas/limiar em `docs/metricas_e_limiar.md`; baselines no notebook `02_...` (é preciso rodar você mesmo para encher o MLflow local). Próximo foco: MLP, API, Model Card, vídeo — o que ainda não está feito.
-
 ## Licença
 
 Veja o `LICENSE`.
