@@ -99,5 +99,5 @@ Base histórica pode não representar novos produtos ou regiões. Quem atende o 
 
 1. **Feito:** custo FP/FN e limiar escritos em `docs/metricas_e_limiar.md`.  
 2. *Dummy* + regressão logística, CV estratificada, *seeds*; MLflow (`02_baselines_mlflow.ipynb`).  
-3. MLP PyTorch, comparação com ≥4 métricas, trade-off FP/FN, runs no MLflow.  
+3. **Feito (base):** MLP PyTorch com early stopping, métricas no holdout e MLflow (`03_mlp_mlflow.ipynb`, `src/churn_prediction/mlp.py`). Falta fechar comparação escrita FP/FN no relatório e eventual *fine-tuning*.  
 4. Refatoração `src/`, API, testes, documentação, vídeo; *deploy* em nuvem se couber no tempo.

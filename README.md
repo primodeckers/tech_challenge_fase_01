@@ -35,7 +35,7 @@ Se o notebook de EDA ficar com outputs enormes, no Jupyter use “Clear all outp
 | `src/churn_prediction/` | Código do modelo e dados |
 | `data/raw/` | Excel `Telco_customer_churn.xlsx` |
 | `models/` | Modelos guardados |
-| `notebooks/` | EDA (`01_...`) e baselines + MLflow (`02_...`) |
+| `notebooks/` | EDA (`01_...`), baselines (`02_...`), MLP PyTorch (`03_...`) |
 | `tests/` | `pytest` |
 | `docs/` | Canvas (`ml_canvas.md` / `.html`), métricas (`metricas_e_limiar.md`), Model Card mais tarde |
 | `pyproject.toml` | Dependências, ruff, pytest |
@@ -61,6 +61,10 @@ Com o venv ativo e pacotes instalados, abra `notebooks/01_eda_telco_churn.ipynb`
 Abra `notebooks/02_baselines_mlflow.ipynb` e rode as células. Os *runs* vão para `mlruns/` (não vai para o Git, está no `.gitignore`).
 
 Para ver bonito: na raiz, com venv, `mlflow ui` e abra o link que aparecer (muitas vezes `http://127.0.0.1:5000`).
+
+## MLP (PyTorch)
+
+Abra `notebooks/03_mlp_mlflow.ipynb` e rode as células. O experimento MLflow chama-se `telco_churn_mlp` (compare com `telco_churn_baselines`). Treino em GPU se o PyTorch detectar CUDA; senão usa CPU.
 
 ## Dataset
 

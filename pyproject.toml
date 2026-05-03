@@ -54,8 +54,10 @@ ignore = []
 [tool.ruff.lint.per-file-ignores]
 "src/churn_prediction/datasets.py" = ["N802", "N803", "N806"]
 "src/churn_prediction/baselines.py" = ["N803"]
+"src/churn_prediction/mlp.py" = ["N803", "N806"]
 "tests/test_datasets.py" = ["N803", "N806"]
 "tests/test_baselines.py" = ["N803", "N806"]
+"tests/test_mlp.py" = ["N803", "N806"]
 
 [tool.ruff.format]
 quote-style = "double"
