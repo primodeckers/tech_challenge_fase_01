@@ -116,6 +116,12 @@ Para testar o `POST /predict`, o corpo precisa ter as mesmas colunas que o Excel
 
 Testes da API: `pytest tests/test_api.py`.
 
+### Deploy em nuvem (opcional — FIAP / GCP)
+
+O enunciado aceita deploy em **AWS, Azure ou GCP** com URL pública (bónus). Este repo inclui **`Dockerfile`** + **`requirements-docker.txt`** (só o necessário para servir a API, sem PyTorch/MLflow na imagem).
+
+Instruções completas: **[docs/deploy_cloud_run.md](docs/deploy_cloud_run.md)**. Resumo: gerar `models/churn_api/` com `python scripts/export_logistic_artifact.py`, depois `gcloud run deploy ... --source .`.
+
 ## Dataset
 
 `data/raw/Telco_customer_churn.xlsx` (Telco / IBM, uso acadêmico).
