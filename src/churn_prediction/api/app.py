@@ -8,11 +8,13 @@ import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Any
 
 from fastapi import Body, FastAPI, HTTPException, Request
+from pydantic import BaseModel, ValidationError
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from churn_prediction.api.payload_model import build_churn_row_model
 from churn_prediction.config import THRESHOLD_START
 from churn_prediction.serving import ChurnPredictor
 
@@ -74,8 +76,10 @@ def create_app(*, artifact_dir: Path | None = None) -> FastAPI:
         loaded = (root / "pipeline.joblib").is_file()
         if loaded:
             pred_holder["p"] = ChurnPredictor.load(root)
+            app.state.churn_row_model = build_churn_row_model(pred_holder["p"].columns)
         else:
             pred_holder["p"] = None
+            app.state.churn_row_model = None
         _LOG.info(
             json.dumps(
                 {
@@ -115,15 +119,21 @@ def create_app(*, artifact_dir: Path | None = None) -> FastAPI:
         return {"status": "ok", "model_loaded": loaded}
 
     @app.post("/predict")
-    def predict(
-        payload: Annotated[dict[str, Any], Body(...)],
-    ) -> dict[str, Any]:
+    def predict(request: Request, body: dict[str, Any] = Body(...)) -> dict[str, Any]:
         pred = pred_holder["p"]
         if pred is None:
             raise HTTPException(
                 status_code=503,
                 detail=("Modelo não carregado. Rode o script export ou defina CHURN_ARTIFACT_DIR."),
             )
+        row_model: type[BaseModel] | None = getattr(request.app.state, "churn_row_model", None)
+        if row_model is None:
+            raise HTTPException(status_code=503, detail="Estado do modelo inválido.")
+        try:
+            row = row_model.model_validate(body)
+        except ValidationError as e:
+            raise HTTPException(status_code=422, detail=e.errors()) from e
+        payload = row.model_dump(by_alias=True)
         try:
             p_churn = pred.predict_proba_churn(payload)
         except ValueError as e:

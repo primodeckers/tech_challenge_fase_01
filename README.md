@@ -51,6 +51,8 @@ make lint-fix
 make test
 ```
 
+`make run` é o mesmo que `make serve` (sobe o uvicorn da API no `127.0.0.1:8000`).
+
 Sem make: `ruff check src tests`, `pytest`.
 
 ## EDA
@@ -96,6 +98,7 @@ Gera o artefato do **pipeline logístico** (regressão + pré-processamento igua
 ```bash
 python scripts/export_logistic_artifact.py
 uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
+# ou, com make: make run
 ```
 
 `pipeline.joblib` e `meta.json` vão para `models/churn_api/` por padrão (estão no `.gitignore`; cada clone do repo precisa gerar de novo ou copiar).

@@ -54,7 +54,31 @@ def test_predict_422_campos_em_falta(tmp_path: Path) -> None:
     with TestClient(app) as client:
         r = client.post("/predict", json={})
     assert r.status_code == 422
-    assert "Campos em falta" in r.json()["detail"]
+    detail = r.json()["detail"]
+    assert isinstance(detail, list) and len(detail) >= 1
+    assert all(isinstance(err, dict) for err in detail)
+    assert any(err.get("type") == "missing" for err in detail)
+
+
+@pytest.mark.skipif(not DATA_FILE.is_file(), reason="Dataset ausente")
+def test_predict_422_coluna_extra(tmp_path: Path) -> None:
+    bundle = tmp_path / "api_bundle"
+    export_logistic_artifact(bundle, data_path=DATA_FILE)
+    app = create_app(artifact_dir=bundle)
+
+    from churn_prediction.datasets import load_churn_telco, make_X_y
+
+    df = load_churn_telco(DATA_FILE)
+    X, _ = make_X_y(df)
+    payload = json.loads(X.iloc[[0]].to_json(orient="records"))[0]
+    payload["coluna_que_nao_existe"] = 123
+
+    with TestClient(app) as client:
+        r = client.post("/predict", json=payload)
+    assert r.status_code == 422
+    detail = r.json()["detail"]
+    assert isinstance(detail, list)
+    assert any(err.get("type") == "extra_forbidden" for err in detail)
 
 
 @pytest.mark.skipif(not DATA_FILE.is_file(), reason="Dataset ausente")

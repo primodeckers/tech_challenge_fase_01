@@ -1,4 +1,4 @@
-.PHONY: install install-dev lint lint-fix test export-model serve
+.PHONY: install install-dev lint lint-fix test export-model serve run
 
 install:
 	python -m pip install -U pip
@@ -24,3 +24,5 @@ export-model:
 
 serve:
 	uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
+
+run: serve
