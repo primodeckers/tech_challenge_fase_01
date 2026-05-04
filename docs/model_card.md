@@ -10,7 +10,7 @@ A MLP em PyTorch está no `03_mlp_mlflow.ipynb` e em `src/churn_prediction/mlp.p
 
 ## Uso pretendido
 
-Probabilidade de churn para ordenar filas de retenção. Caso dúbio, o grupo assume revisão humana ou regra de negócio — o modelo não manda fechar contrato.
+Probabilidade de churn para ordenar filas de retenção. Caso dúbio, assume-se revisão humana ou regra de negócio — o modelo não manda fechar contrato.
 
 ## Performance
 
@@ -48,7 +48,7 @@ As 26 colunas de entrada batem com o `meta.json` do export (lista do que se tiro
 
 Planilha pública e antiga: não representa a carteira de uma operadora real hoje. Não existe coluna de satisfação, reclamação ou qualidade de serviço — só o que o Excel tem. Contrato *month-to-month* e tenure curto sobressaem porque são sinais fortes no arquivo, não porque o negócio diga que são a única causa de churn. `Country` / `State` / `City` são categorias de um mercado específico; noutro país o modelo não “transporta”.
 
-Churn é minoria: accuracy alta diz pouco. Por isso no outro doc ficou PR-AUC e F1 na classe positiva. Não abrimos corte por `Gender` nem por outros subgrupos; num produto com exposição pública isso tinha de ser discutido com jurídico/compliance, não coube no tempo do challenge.
+Churn é minoria: accuracy alta diz pouco. Por isso no outro doc ficou PR-AUC e F1 na classe positiva. Não abri análise de desempenho por `Gender` nem por outros subgrupos demográficos; num produto com exposição pública isso exigiria alinhamento com jurídico/compliance — ficou fora do âmbito deste trabalho.
 
 ## Falhas operacionais que já antecipamos
 

@@ -1,14 +1,14 @@
 # Métricas de negócio e limiar
 
-Antes de insistir nos modelos mais pesados, combinamos **métrica técnica**, **custo FP/FN** e **limiar** para não mudar critério no meio do trabalho. Os custos aqui são **chute razoável do grupo**, não valores da contabilidade — numa empresa real alguém de finanças traria os valores em dinheiro. Servem para fixar o limiar e para contar no vídeo STAR.
+Antes de insistir nos modelos mais pesados, alinhei **métrica técnica**, **custo FP/FN** e **limiar** para não mudar critério no meio do trabalho. Os custos aqui são **hipótese razoável**, não valores da contabilidade — numa empresa real alguém de finanças traria os valores em dinheiro. Servem para fixar o limiar e para contar no vídeo STAR.
 
 ## Métricas técnicas
 
-Escolhemos uma métrica principal para comparar *runs* no MLflow sem ficar só na conversa de “acertou mais vezes”.
+Escolhi uma métrica principal para comparar *runs* no MLflow sem ficar só na conversa de “acertou mais vezes”.
 
 **PR-AUC** (*average precision*) é a principal: há muitos *não churn* na base e a classe que nos interessa é minoria — neste desenho a PR-AUC diz mais sobre o que precisamos que a ROC sozinha.
 
-Ao lado disso guardamos **F1** na classe churn (dá para falar com o grupo num número só), **ROC-AUC** (todo mundo conhece), e **balanced accuracy** para ver se estamos melhores que adivinhar pela maioria. **Accuracy** sozinha não decide nada aqui.
+Ao lado disso registo **F1** na classe churn (um número só para comparar modelos), **ROC-AUC** (referência comum), e **balanced accuracy** para ver se estamos melhores que adivinhar pela maioria. **Accuracy** sozinha não decide nada aqui.
 
 ## Custo FP vs. FN (hipótese)
 
@@ -16,11 +16,11 @@ Ao lado disso guardamos **F1** na classe churn (dá para falar com o grupo num n
 
 **FP:** o modelo marcou risco e o cliente ficava — gastamos contato e tempo.
 
-Combinado que o grupo vai usar por ora: **1 FN “pesa” o dobro de 1 FP** (razão 2 : 1). Não são euros; é só para pesar o limiar e desenhar a matriz de confusão no relatório. Se o professor ou o grupo quiserem outra razão, alteramos este arquivo e reavaliamos o limiar.
+Hipótese que uso por ora: **1 FN “pesa” o dobro de 1 FP** (razão 2 : 1). Não são euros; é só para pesar o limiar e desenhar a matriz de confusão no relatório. Se o avaliador pedir outra razão, altero este ficheiro e reavalio o limiar.
 
 ## Limiar em probabilidade
 
-O *logit* (e mais tarde a MLP) pode dar **probabilidade** de churn. Começamos com **0,35** em vez de 0,5 porque, com FN mais caro que FP, convém puxar mais *recall* na classe positiva e aceitar mais falsos alarmes no início. O valor fino sai depois de olhar validação / curva PR — isto é **ponto de partida**, não “ótimo”.
+O *logit* (e mais tarde a MLP) pode dar **probabilidade** de churn. Comecei com **0,35** em vez de 0,5 porque, com FN mais caro que FP, convém puxar mais *recall* na classe positiva e aceitar mais falsos alarmes no início. O valor fino sai depois de olhar validação / curva PR — isto é **ponto de partida**, não “ótimo”.
 
 ## MLflow e código
 

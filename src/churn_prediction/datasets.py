@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-# Colunas que não entram no X por decisão do grupo (IDs, alvo, *leakage* provável).
+# Colunas que não entram no X por decisão de modelagem (IDs, alvo, *leakage* provável).
 DROP_FOR_MODELING: list[str] = [
     "CustomerID",
     "Churn Label",

@@ -1,6 +1,6 @@
 # Tech Challenge — Fase 1 (Produtização de modelos)
 
-Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLflow, MLP em PyTorch com runs no mesmo MLflow, API FastAPI a servir o pipeline de regressão logística exportado (o pré-processamento é o mesmo dos notebooks). Em `docs/` está o canvas, o doc de métricas e limiar, o model card, o texto de deploy (batch vs pedido) e o rascunho de monitoramento.
+Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLflow, MLP em PyTorch com runs no mesmo MLflow, API FastAPI a servir o pipeline de regressão logística exportado (o pré-processamento é o mesmo dos notebooks). Em `docs/` ficam o canvas, o doc de métricas e limiar, o model card, o texto de deploy (batch vs pedido) e o rascunho de monitoramento.
 
 ## Requisitos
 
@@ -69,7 +69,7 @@ Abra `notebooks/03_mlp_mlflow.ipynb` e rode as células. Treino em GPU se o PyTo
 
 ## MLflow — onde grava e como abrir a UI
 
-Os notebooks apontam o tracking para **`mlruns/` na raiz deste repositório** (`file:.../tech_challenge_fase_01/mlruns`). Essa pasta é só na tua máquina — está no `.gitignore`, por isso quem clonar o repo precisa de **correr os notebooks outra vez** (ou copiar um `mlruns/` à parte se o grupo combinar isso).
+Os notebooks apontam o tracking para **`mlruns/` na raiz deste repositório** (`file:.../tech_challenge_fase_01/mlruns`). Essa pasta é só na tua máquina — está no `.gitignore`, por isso quem clonar o repo precisa de **correr os notebooks outra vez** (ou copiar um `mlruns/` à parte se quiseres preservar os mesmos números noutra máquina).
 
 Experimentos definidos em `src/churn_prediction/config.py`:
 
@@ -89,7 +89,7 @@ python -m mlflow ui --backend-store-uri file:./mlruns
 
 Abre o URL que o comando imprimir (geralmente `http://127.0.0.1:5000`). Escolhe o experimento no menu **Experiments**. Os runs aparecem na vista de **Runs** ou em **Run evaluations**, conforme a versão da UI — **não** uses o separador **Traces** para isto (é outra funcionalidade; sem *tracing* manual fica vazio).
 
-Documentação escrita do projeto (métricas, limiar, model card, deploy, monitoramento) está em `docs/`; vale sincronizar números do MLflow com `docs/model_card.md` quando fecharem os runs.
+Documentação escrita do projeto (métricas, limiar, model card, deploy, monitoramento) está em `docs/`; vale sincronizar números do MLflow com `docs/model_card.md` quando fechares os runs finais.
 
 ## API (FastAPI)
 

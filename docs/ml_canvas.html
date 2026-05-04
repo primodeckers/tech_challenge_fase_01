@@ -98,14 +98,14 @@
     <p class="intro">
       Tech Challenge · Fase 1. Caixas no espírito do
       <a href="https://www.ownml.co/machine-learning-canvas">Machine Learning Canvas</a>
-      (Louis Dorard / OWNML). Texto canônico em <code>ml_canvas.md</code>; quem mudar um arquivo alinha o outro para o grupo não ler versões diferentes.
+      (Louis Dorard / OWNML). Texto canônico em <code>ml_canvas.md</code>; quem alterar um ficheiro alinha o outro para não ficarem versões diferentes.
     </p>
 
     <div class="grid-top">
       <article class="box">
         <h2>End-user <span class="sub">quem usa / quem é afetado</span></h2>
         <div class="body">
-          <p>Direção e dono de produto querem menos churn sem estourar o orçamento de campanhas. Marketing e CRM querem listas priorizadas e mensagens que não chateiem quem não ia sair. Operações e <em>call center</em> precisam de filas realistas — não dá para tratar sete mil pessoas na mesma semana. A equipe de dados entrega <em>pipeline</em>, MLflow e API. Jurídico só faria falta em produção com dados reais; aqui é exercício com dataset público.</p>
+          <p>Direção e dono de produto querem menos churn sem estourar o orçamento de campanhas. Marketing e CRM querem listas priorizadas e mensagens que não chateiem quem não ia sair. Operações e <em>call center</em> precisam de filas realistas — não dá para tratar sete mil pessoas na mesma semana. Neste exercício, o trabalho de dados cobre <em>pipeline</em>, MLflow e API. Jurídico só faria falta em produção com dados reais; aqui é exercício com dataset público.</p>
         </div>
       </article>
       <article class="box">
@@ -121,7 +121,7 @@
         <div class="body">
           <ul>
             <li>Arquivo <code>data/raw/Telco_customer_churn.xlsx</code> no repositório (IBM-style Telco churn, uso acadêmico).</li>
-            <li>Em uma operadora real entrariam bases internas de <em>billing</em>, CRM e possivelmente APIs de terceiros; não é o nosso caso neste challenge.</li>
+            <li>Em uma operadora real entrariam bases internas de <em>billing</em>, CRM e possivelmente APIs de terceiros; não é o cenário deste challenge.</li>
           </ul>
         </div>
       </article>
@@ -145,7 +145,7 @@
         <h2>Data preparation <span class="sub">treino e features</span></h2>
         <div class="body">
           <p>Ordem de grandeza: <strong>~7k linhas</strong>, <strong>30+ colunas</strong> — volume modesto, mas dá para treinar e comparar modelos sem drama. Alvo: <code>Churn Label</code> (Yes / No); no EDA a classe Yes rondava <strong>cerca de um quarto</strong> da base (desequilibrada, mas não raríssima). Vale medir de novo depois de tratarmos as linhas em que <code>Total Charges</code> não convertia para número (poucas, mas não zero).</p>
-          <p><strong>Features:</strong> serviços, contrato, encargos, <em>tenure</em>, composição do agregado, etc. <strong>Cuidado com <em>leakage</em>:</strong> <code>Churn Score</code>, <code>CLTV</code>, <code>Churn Reason</code> cheiram a informação <em>post hoc</em> — o default do grupo é <strong>não usar</strong> como <em>input</em> até alguém confirmar o <em>timing</em> em documentação de negócio.</p>
+          <p><strong>Features:</strong> serviços, contrato, encargos, <em>tenure</em>, composição do agregado, etc. <strong>Cuidado com <em>leakage</em>:</strong> <code>Churn Score</code>, <code>CLTV</code>, <code>Churn Reason</code> cheiram a informação <em>post hoc</em> — por omissão <strong>não entram</strong> como <em>input</em> até haver confirmação do <em>timing</em> em documentação de negócio.</p>
         </div>
       </article>
     </div>
@@ -156,9 +156,9 @@
         <div class="body">
           <p>Valores fechados (razão FP/FN, limiar, métricas): <strong><code>docs/metricas_e_limiar.md</code></strong>. Aqui fica o resumo.</p>
           <p><strong>Métricas de negócio (<em>bottom-line</em>, a quantificar):</strong> custo de <strong>falso negativo</strong> (perdemos a retenção) vs. <strong>falso positivo</strong> (contato inútil, desgaste). Sem contabilidade fina no enunciado, usamos <strong>razões</strong> FP:FN plausíveis (ex.: “1 FN custa o dobro de 1 FP”) e documentamos no <em>Model Card</em>. <em>Accuracy</em> sozinha não conta — com muitos No na base dá para parecer bom sem aprender.</p>
-          <p><strong>Métricas de precisão da predição:</strong> ROC-AUC para comparar entre si; PR-AUC e F1 na classe Yes (classe minoria); Brier só se formos usar a probabilidade para cortes finos.</p>
+          <p><strong>Métricas de precisão da predição:</strong> ROC-AUC para comparar entre si; PR-AUC e F1 na classe Yes (classe minoria); Brier só se a probabilidade for usada para cortes finos.</p>
           <p><strong>Avaliação <em>offline</em>:</strong> validação cruzada <strong>estratificada</strong>, <em>seed</em> fixo, mesma lógica para baselines e para a MLP mais tarde.</p>
-          <p><strong>Em produção (rascunho):</strong> taxa de churn entre clientes de alto risco, estabilidade das distribuições de <em>features</em> (<em>drift</em>), predições falhadas — encaixa no plano de monitoramento que ainda vamos fechar no fim do trabalho.</p>
+          <p><strong>Em produção (rascunho):</strong> taxa de churn entre clientes de alto risco, estabilidade das distribuições de <em>features</em> (<em>drift</em>), predições falhadas — encaixa no plano em <code>docs/monitoramento.md</code>.</p>
         </div>
       </article>
     </div>
@@ -179,7 +179,7 @@
       <article class="box data">
         <h2>Learning models <span class="sub">treino e deploy</span></h2>
         <div class="body">
-          <p><strong>Quando treinar ou refrescar:</strong> após janelas de dados fechadas ou quando o <em>drift</em> passar um limiar; no trabalho nos focamos numa versão entregável.</p>
+          <p><strong>Quando treinar ou refrescar:</strong> após janelas de dados fechadas ou quando o <em>drift</em> passar um limiar; neste trabalho o foco é uma versão entregável.</p>
           <p><strong>Tempo de treino:</strong> aceitável em minutos neste volume; MLP com GPU opcional.</p>
           <p><strong>Critério para “subir” modelo:</strong> melhoria clara em PR-AUC ou F1 no Yes em relação ao <em>baseline</em> logístico, sem degradação grave na matriz de confusão ao limiar escolhido; MLflow com <em>commit</em> Git e referência ao arquivo de dados.</p>
         </div>
@@ -197,9 +197,9 @@
 
     <div class="wide">
       <article class="box">
-        <h2>Próximos passos do grupo</h2>
+        <h2>Próximos passos</h2>
         <div class="body">
-          <p>Custo FP/FN e limiar em <code>metricas_e_limiar.md</code>; baselines (incluindo Random Forest) e MLflow no <code>02_baselines_mlflow.ipynb</code>; MLP no <code>03_mlp_mlflow.ipynb</code>; export, API e testes feitos. Falta encher o model card com números do MLflow, gravar o vídeo STAR e, se alguém quiser o bónus, deploy em nuvem.</p>
+          <p>Custo FP/FN e limiar em <code>metricas_e_limiar.md</code>; baselines (incluindo Random Forest) e MLflow no <code>02_baselines_mlflow.ipynb</code>; MLP no <code>03_mlp_mlflow.ipynb</code>; export, API e testes feitos. Falta sobretudo gravar o <strong>vídeo STAR</strong>; deploy em nuvem continua opcional (bónus).</p>
         </div>
       </article>
     </div>
