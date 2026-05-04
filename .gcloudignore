@@ -1,0 +1,2 @@
+#!include:.gitignore
+!models/churn_api/pipeline.joblib

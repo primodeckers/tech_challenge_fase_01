@@ -1,0 +1,32 @@
+{
+  "columns": [
+    "Count",
+    "Country",
+    "State",
+    "City",
+    "Zip Code",
+    "Latitude",
+    "Longitude",
+    "Gender",
+    "Senior Citizen",
+    "Partner",
+    "Dependents",
+    "Tenure Months",
+    "Phone Service",
+    "Multiple Lines",
+    "Internet Service",
+    "Online Security",
+    "Online Backup",
+    "Device Protection",
+    "Tech Support",
+    "Streaming TV",
+    "Streaming Movies",
+    "Contract",
+    "Paperless Billing",
+    "Payment Method",
+    "Monthly Charges",
+    "Total Charges"
+  ],
+  "dataset_rows": 7032,
+  "dataset_file": "Telco_customer_churn.xlsx"
+}

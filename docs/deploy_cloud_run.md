@@ -12,7 +12,31 @@ Serviço **churn-telco-api** na região **europe-west1**:
 | Swagger | `https://churn-telco-api-169412920601.europe-west1.run.app/docs` |
 | Health | `https://churn-telco-api-169412920601.europe-west1.run.app/health` |
 
-Teste rápido no terminal: `curl -sS "https://churn-telco-api-169412920601.europe-west1.run.app/health"`. O `POST /predict` funciona como no ambiente local; o corpo continua a ser uma linha de *features* alinhada ao `meta.json` do export.
+Teste rápido no terminal: `curl -sS "https://churn-telco-api-169412920601.europe-west1.run.app/health"`. Para o `POST /predict`, há um corpo de exemplo em **`examples/predict_sample.json`** (primeira linha do `X` após `make_X_y`, alinhada ao `meta.json`). Exemplo com `curl`:
+
+```bash
+curl -sS -X POST "https://churn-telco-api-169412920601.europe-west1.run.app/predict" \
+  -H "Content-Type: application/json" \
+  -d @examples/predict_sample.json
+```
+
+(Em Windows PowerShell podes usar `Get-Content examples/predict_sample.json -Raw | curl ...` ou colar o JSON no Swagger em `/docs`.)
+
+### Validar o deploy
+
+Depois do `gcloud run deploy`, confirma que o modelo carregou e que o `/predict` responde:
+
+```bash
+curl -sS "https://churn-telco-api-169412920601.europe-west1.run.app/health"
+# Esperado: {"status":"ok","model_loaded":true}
+
+curl -sS -X POST "https://churn-telco-api-169412920601.europe-west1.run.app/predict" \
+  -H "Content-Type: application/json" \
+  -d @examples/predict_sample.json
+# Esperado: JSON com probability_churn, threshold, predicted_churn (HTTP 200)
+```
+
+Se `model_loaded` for `false` ou `/predict` devolver **503** *«Modelo não carregado»*, vê a secção **Notas** abaixo (`.gcloudignore`, export e **variável de ambiente no Git Bash**).
 
 ## O que a Google exige
 
@@ -41,15 +65,21 @@ Conta com **faturação** ligada ao projeto (mesmo a usar *free tier*, o Cloud R
      --region europe-west1 \
      --allow-unauthenticated \
      --memory 1Gi \
-     --set-env-vars CHURN_ARTIFACT_DIR=/app/models/churn_api
+     --set-env-vars "CHURN_ARTIFACT_DIR=/app/models/churn_api"
    ```
+
+   **Windows (Git Bash):** sem aspas, o MSYS transforma `/app/...` em `C:\Program Files\Git\app\...` e o serviço fica com `CHURN_ARTIFACT_DIR` errado → `/health` com `model_loaded: false` e 503 no `/predict`. Use aspas como acima, `MSYS_NO_PATHCONV=1`, ou corre o mesmo comando no **cmd.exe** / PowerShell.
 
    O `--source .` manda o código para o Cloud Build, monta a imagem e publica. No fim o CLI mostra o URL HTTPS novo.
 
    Se `europe-west1` não der na conta, tenta `--region us-central1` ([lista de regiões](https://cloud.google.com/run/docs/locations)).
 
-## Notas
+## Notas e resolução de problemas
 
 - **Cold start:** depois de estar parado, o primeiro pedido pode levar alguns segundos.
-- **`pipeline.joblib`** não vai para o Git (`.gitignore`); cada deploy usa os ficheiros que estiverem na máquina quando corres o comando.
-- Memória: comecei com `1Gi`; se o *container* reiniciar ao carregar o modelo, sobe para `--memory 2Gi`.
+- **`pipeline.joblib`** não vai para o Git (`.gitignore`); cada deploy usa os ficheiros que estiverem na máquina quando corres o comando (após `export_logistic_artifact`).
+- **503 *«Modelo não carregado»* ou `/health` com `model_loaded: false` — causas frequentes:**
+  1. **`CHURN_ARTIFACT_DIR` errado no Cloud Run** (típico no **Git Bash** sem aspas: `/app/...` vira `C:\Program Files\Git\app\...`). Corrige com `--set-env-vars "CHURN_ARTIFACT_DIR=/app/models/churn_api"` ou redeploy a partir do **cmd.exe** / PowerShell.
+  2. **`.joblib` ausente na imagem:** o `gcloud run deploy --source` respeita o `.gitignore` e **não** envia `*.joblib` a menos que exista **`.gcloudignore`** na raiz com `#!include:.gitignore` e `!models/churn_api/pipeline.joblib`. Sem isso, o *build* pode concluir mas o modelo não está em `/app/models/churn_api` dentro do container.
+  3. **Export em falta:** corre `python scripts/export_logistic_artifact.py` antes do deploy para existir `models/churn_api/pipeline.joblib` localmente.
+- **Memória:** comecei com `1Gi`; se o *container* reiniciar ao carregar o modelo, sobe para `--memory 2Gi`.

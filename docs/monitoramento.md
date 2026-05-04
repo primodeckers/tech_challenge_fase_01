@@ -8,4 +8,4 @@ Texto para depois de existir tráfego real. Hoje o modelo só corre na máquina 
 
 **Alertas (números por acordo com o negócio):** p95 de latência acima do limite combinado; health a dizer que o modelo não carregou; subida forte de 422 — muitas vezes é sistema de origem a mudar coluna ou formato.
 
-**Quando a coisa falha:** 503 → export correu? `CHURN_ARTIFACT_DIR` aponta para a pasta com `pipeline.joblib`? reiniciar o processo. Chuva de 422 → comparar payload com `meta.json`. Probabilidades que não batem com o que o negócio espera → notebook com amostra recente; se a PR-AUC despenhar face ao que tinham no treino, planejar novo treino e novo export.
+**Quando a coisa falha:** 503 → export correu? `CHURN_ARTIFACT_DIR` correto (no deploy Windows/Git Bash ver **docs/deploy_cloud_run.md**)? `.gcloudignore` a incluir `pipeline.joblib` no *upload*? Chuva de 422 → comparar payload com `meta.json`. Probabilidades que não batem com o que o negócio espera → notebook com amostra recente; se a PR-AUC despenhar face ao que tinham no treino, planejar novo treino e novo export.

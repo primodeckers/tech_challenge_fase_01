@@ -101,7 +101,7 @@ uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
 # ou, com make: make run
 ```
 
-`pipeline.joblib` e `meta.json` vão para `models/churn_api/` por padrão (estão no `.gitignore`; cada clone do repo precisa gerar de novo ou copiar).
+`pipeline.joblib` e `meta.json` vão para `models/churn_api/` por padrão. O **`*.joblib`** não é versionado (`.gitignore`); cada clone precisa de **`python scripts/export_logistic_artifact.py`** para gerar o ficheiro localmente ou para incluir no build Docker. O **`meta.json`** no mesmo diretório documenta a ordem das colunas esperadas pelo `/predict`.
 
 - **`GET /`** — resumo e *links* (`/health`, `/docs`, etc.).
 - **`GET /health`** — `model_loaded` diz se o modelo foi encontrado ao arrancar.
@@ -112,7 +112,7 @@ Os pedidos vão saindo no terminal em JSON (uma linha por pedido, com caminho, m
 
 Outra pasta: variável de ambiente **`CHURN_ARTIFACT_DIR`** a apontar para o diretório que tem `pipeline.joblib` e `meta.json`.
 
-Para testar o `POST /predict`, o corpo precisa ter as mesmas colunas que o Excel (sem `Churn Label`). Um jeito rápido é copiar os valores de uma linha do dataset para um JSON — o Swagger em `/docs` ajuda a montar.
+Para testar o `POST /predict`, o corpo precisa ter as mesmas colunas que o Excel (sem `Churn Label`). Há um exemplo pronto em **`examples/predict_sample.json`**; o Swagger em `/docs` (local ou no Cloud Run) também serve para colar o JSON.
 
 Testes da API: `pytest tests/test_api.py`.
 
@@ -124,7 +124,7 @@ Subi a mesma API para **Google Cloud Run** (`europe-west1`), com o `Dockerfile` 
 - **Swagger:** `https://churn-telco-api-169412920601.europe-west1.run.app/docs`
 - **Health:** `https://churn-telco-api-169412920601.europe-west1.run.app/health`
 
-O primeiro pedido depois de inatividade pode demorar uns segundos (*cold start*). Quem clonar o repo ainda tem de gerar `models/churn_api/` e voltar a fazer deploy se quiser o mesmo serviço noutro projeto — o processo está em **[docs/deploy_cloud_run.md](docs/deploy_cloud_run.md)**.
+O primeiro pedido depois de inatividade pode demorar uns segundos (*cold start*). Para repetir o deploy noutro projeto GCP: export local do artefacto, **`.gcloudignore`** (para o `pipeline.joblib` entrar no tarball do `gcloud run deploy --source`), e **`CHURN_ARTIFACT_DIR=/app/models/churn_api`** entre aspas no **Git Bash** do Windows — ver **[docs/deploy_cloud_run.md](docs/deploy_cloud_run.md)** (URLs, comandos, validação e resolução de problemas).
 
 ## Dataset
 
