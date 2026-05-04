@@ -56,6 +56,9 @@ wandb/
 scripts/apply_eda_interpretations.py
 scripts/build_baselines_notebook.py
 
+# Roteiro / guia pessoal para o vídeo STAR (só local)
+docs/guia_video_star.md
+
 # OS / IDE / Cursor (regras locais, não versionar)
 .cursor/
 .DS_Store
