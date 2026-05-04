@@ -97,4 +97,4 @@ Base histórica pode não representar novos produtos ou regiões. Quem atende o 
 
 ## Próximos passos
 
-Estão feitos: doc de custo FP/FN e limiar (`metricas_e_limiar.md`), baselines com *Dummy*, logística e Random Forest no `02_baselines_mlflow.ipynb`, MLP no `03_mlp_mlflow.ipynb`, export da logística, API com rotas úteis e testes; model card, deploy e monitoramento em `docs/`. Falta sobretudo **gravar o vídeo STAR**; deploy em nuvem continua opcional (bónus).
+Estão feitos: doc de custo FP/FN e limiar (`metricas_e_limiar.md`), baselines com *Dummy*, logística e Random Forest no `02_baselines_mlflow.ipynb`, MLP no `03_mlp_mlflow.ipynb`, export da logística, API com rotas úteis e testes; model card, deploy (incluindo o desenho em `deploy_arquitetura.md` e a API pública no Cloud Run, ver `deploy_cloud_run.md`) e monitoramento em `docs/`. Falta sobretudo **gravar o vídeo STAR**.

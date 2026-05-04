@@ -116,11 +116,15 @@ Para testar o `POST /predict`, o corpo precisa ter as mesmas colunas que o Excel
 
 Testes da API: `pytest tests/test_api.py`.
 
-### Deploy em nuvem (opcional — FIAP / GCP)
+### Deploy em nuvem (FIAP / GCP)
 
-O enunciado aceita deploy em **AWS, Azure ou GCP** com URL pública (bónus). Este repo inclui **`Dockerfile`** + **`requirements-docker.txt`** (só o necessário para servir a API, sem PyTorch/MLflow na imagem).
+Subi a mesma API para **Google Cloud Run** (`europe-west1`), com o `Dockerfile` e `requirements-docker.txt` da raiz do repo. Endereço público:
 
-Instruções completas: **[docs/deploy_cloud_run.md](docs/deploy_cloud_run.md)**. Resumo: gerar `models/churn_api/` com `python scripts/export_logistic_artifact.py`, depois `gcloud run deploy ... --source .`.
+- **Base:** `https://churn-telco-api-169412920601.europe-west1.run.app`
+- **Swagger:** `https://churn-telco-api-169412920601.europe-west1.run.app/docs`
+- **Health:** `https://churn-telco-api-169412920601.europe-west1.run.app/health`
+
+O primeiro pedido depois de inatividade pode demorar uns segundos (*cold start*). Quem clonar o repo ainda tem de gerar `models/churn_api/` e voltar a fazer deploy se quiser o mesmo serviço noutro projeto — o processo está em **[docs/deploy_cloud_run.md](docs/deploy_cloud_run.md)**.
 
 ## Dataset
 

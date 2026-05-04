@@ -6,4 +6,4 @@ A peça que entrego é uma API **sob pedido**: um POST com um cliente em JSON e 
 
 Batch (job noturno, mandar arquivo de scores para o CRM) também seria caminho válido em produção. Optei pela API porque o enunciado obriga FastAPI e porque assim mostro contrato HTTP, `/health` e validação sem montar um segundo sistema só para o desenho em batch. No mundo real as duas coisas coexistem: lista grande sai do *warehouse*, dúvida no *front* bate na API.
 
-O que não fizemos (e não era obrigatório): empacotar em Docker, TLS, login, limite de taxa, *reverse proxy*. O bónus de nuvem seria expor o mesmo `uvicorn` atrás de um URL gerido (Cloud Run, ECS, o que a FIAP aceitar) quando sobrar tempo.
+Em produção a sério ainda entrariam coisas que aqui não montei: login, limite de taxa, *reverse proxy* dedicado. O que fiz para o bónus da FIAP foi **Docker** + **Google Cloud Run** na região `europe-west1`: a API pública fica em `https://churn-telco-api-169412920601.europe-west1.run.app` (Swagger em `/docs`, o mesmo contrato que em local). O HTTPS vem do próprio serviço; não tratei de autenticação de chamadas.
