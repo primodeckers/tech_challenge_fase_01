@@ -4,7 +4,7 @@ Este documento segue as **caixas** do [Machine Learning Canvas](https://www.ownm
 
 Trabalhamos em cima do `data/raw/Telco_customer_churn.xlsx` e do `notebooks/01_eda_telco_churn.ipynb`. Se o Excel mudar, vale rever as porcentagens e as notas de qualidade.
 
-Versão em **quadro** na mesma pasta: `ml_canvas.html` (abre no navegador). Quem editar um arquivo precisa alinhar o outro, senão alguém lê uma coisa e o resto do grupo outra.
+Versão em **quadro** na mesma pasta: `ml_canvas.html` (abre no navegador). Quem mexer num arquivo lembra-se de atualizar o par (md ou html), senão metade do grupo lê uma versão e a outra metade lê outra.
 
 ---
 
@@ -97,9 +97,4 @@ Base histórica pode não representar novos produtos ou regiões. Quem atende o 
 
 ## Próximos passos do grupo
 
-1. **Feito:** custo FP/FN e limiar em `docs/metricas_e_limiar.md`.  
-2. **Feito:** baselines (*Dummy* + logística), CV, MLflow — `02_baselines_mlflow.ipynb`.  
-3. **Feito (base):** MLP PyTorch com early stopping e MLflow — `03_mlp_mlflow.ipynb` / `src/churn_prediction/mlp.py`. Ainda falta texto de comparação FP/FN no relatório e, se der tempo, mais uma rodada de hiperparâmetros.  
-4. **Feito:** export do pipeline logístico (`scripts/export_logistic_artifact.py`), API FastAPI com `/`, `/health`, `/predict`, testes em `tests/test_api.py`.  
-5. **Model Card** esboço em `docs/model_card.md` — revisar com os números finais do relatório.  
-6. **Pendente:** vídeo STAR e *deploy* opcional (Docker/cloud), conforme o enunciado.
+Já temos o doc de custo FP/FN e limiar (`metricas_e_limiar.md`), baselines com *Dummy*, logística e Random Forest no `02_baselines_mlflow.ipynb`, MLP no `03_mlp_mlflow.ipynb`, export da logística, API com rotas úteis e testes. Model card, deploy e monitoramento estão em `docs/` mas o model card ainda precisa dos números finais copiados do MLflow. Falta sobretudo o vídeo STAR; deploy em nuvem continua opcional.

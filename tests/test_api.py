@@ -32,6 +32,7 @@ def test_health_sem_modelo(tmp_path: Path) -> None:
     body = r.json()
     assert body["status"] == "ok"
     assert body["model_loaded"] is False
+    assert "X-Process-Time-Ms" in r.headers
 
 
 @pytest.mark.skipif(not DATA_FILE.is_file(), reason="Dataset ausente")

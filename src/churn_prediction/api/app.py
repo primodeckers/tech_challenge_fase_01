@@ -2,15 +2,32 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import os
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Request
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from churn_prediction.config import THRESHOLD_START
 from churn_prediction.serving import ChurnPredictor
+
+_LOG = logging.getLogger("churn_prediction.api")
+
+
+def _ensure_json_logger() -> logging.Logger:
+    if _LOG.handlers:
+        return _LOG
+    h = logging.StreamHandler()
+    h.setFormatter(logging.Formatter("%(message)s"))
+    _LOG.addHandler(h)
+    _LOG.setLevel(logging.INFO)
+    _LOG.propagate = False
+    return _LOG
 
 
 def resolve_artifact_dir(explicit: Path | None) -> Path:
@@ -22,18 +39,53 @@ def resolve_artifact_dir(explicit: Path | None) -> Path:
     return (Path.cwd() / "models" / "churn_api").resolve()
 
 
+class LatencyLoggingMiddleware(BaseHTTPMiddleware):
+    """Regista cada pedido em JSON (uma linha) e devolve latência no header."""
+
+    async def dispatch(self, request: Request, call_next):  # type: ignore[no-untyped-def]
+        log = _ensure_json_logger()
+        t0 = time.perf_counter()
+        response = await call_next(request)
+        ms = (time.perf_counter() - t0) * 1000
+        line = json.dumps(
+            {
+                "event": "http_request",
+                "path": request.url.path,
+                "method": request.method,
+                "status_code": response.status_code,
+                "latency_ms": round(ms, 2),
+            },
+            ensure_ascii=False,
+        )
+        log.info(line)
+        response.headers["X-Process-Time-Ms"] = str(round(ms, 2))
+        return response
+
+
 def create_app(*, artifact_dir: Path | None = None) -> FastAPI:
     """`artifact_dir` opcional (útil em testes); senão usa env ou `models/churn_api` na cwd."""
 
+    _ensure_json_logger()
     pred_holder: dict[str, ChurnPredictor | None] = {"p": None}
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         root = resolve_artifact_dir(artifact_dir)
-        if (root / "pipeline.joblib").is_file():
+        loaded = (root / "pipeline.joblib").is_file()
+        if loaded:
             pred_holder["p"] = ChurnPredictor.load(root)
         else:
             pred_holder["p"] = None
+        _LOG.info(
+            json.dumps(
+                {
+                    "event": "lifespan_startup",
+                    "artifact_dir": str(root),
+                    "model_loaded": pred_holder["p"] is not None,
+                },
+                ensure_ascii=False,
+            )
+        )
         yield
 
     app = FastAPI(
@@ -41,6 +93,7 @@ def create_app(*, artifact_dir: Path | None = None) -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
+    app.add_middleware(LatencyLoggingMiddleware)
 
     @app.get("/")
     def root() -> dict[str, Any]:

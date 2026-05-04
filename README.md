@@ -1,6 +1,6 @@
 # Tech Challenge — Fase 1 (Produtização de modelos)
 
-Projeto de churn em telecom no ritmo do challenge: primeiro EDA e baselines no sklearn com MLflow, depois uma MLP em PyTorch também registrada no MLflow, e por fim uma API FastAPI que serve o pipeline logístico (mesmo pré-processamento dos notebooks). Documentação extra está em `docs/` — canvas, métricas/limiar e um model card enxuto.
+Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLflow, MLP em PyTorch com runs no mesmo MLflow, API FastAPI a servir o pipeline de regressão logística exportado (o pré-processamento é o mesmo dos notebooks). Em `docs/` está o canvas, o doc de métricas e limiar, o model card, o texto de deploy (batch vs pedido) e o rascunho de monitoramento.
 
 ## Requisitos
 
@@ -36,8 +36,9 @@ Se o notebook de EDA ficar com outputs enormes, no Jupyter use “Clear all outp
 | `data/raw/` | Excel `Telco_customer_churn.xlsx` |
 | `models/` | Modelos guardados |
 | `notebooks/` | EDA (`01_...`), baselines (`02_...`), MLP PyTorch (`03_...`) |
+| `mlruns/` | Tracking local do MLflow (criado ao correr os notebooks; não vai para o Git) |
 | `tests/` | `pytest` |
-| `docs/` | Canvas (`ml_canvas.md` / `.html`), métricas (`metricas_e_limiar.md`), model card (`model_card.md`) |
+| `docs/` | Canvas, métricas/limiar, model card, `deploy_arquitetura.md`, `monitoramento.md` |
 | `pyproject.toml` | Dependências, ruff, pytest |
 | `requirements.txt` | Atalho `pip install -r ...` |
 
@@ -56,15 +57,37 @@ Sem make: `ruff check src tests`, `pytest`.
 
 Com o venv ativo e pacotes instalados, abra `notebooks/01_eda_telco_churn.ipynb` no Jupyter ou no Cursor com kernel `.venv`.
 
-## Baselines e MLflow
+## Baselines
 
-Abra `notebooks/02_baselines_mlflow.ipynb` e rode as células. Os *runs* vão para `mlruns/` (não vai para o Git, está no `.gitignore`).
-
-Para ver bonito: na raiz, com venv, `mlflow ui` e abra o link que aparecer (muitas vezes `http://127.0.0.1:5000`).
+Abra `notebooks/02_baselines_mlflow.ipynb` e rode as células: *Dummy*, regressão logística e **Random Forest** no mesmo pré-processamento, com cinco *folds*. Cada modelo abre um run no MLflow com nome `dummy_stratified`, `logistic_regression`, `random_forest` (a Random Forest demora mais que os outros).
 
 ## MLP (PyTorch)
 
-Abra `notebooks/03_mlp_mlflow.ipynb` e rode as células. O experimento MLflow chama-se `telco_churn_mlp` (compare com `telco_churn_baselines`). Treino em GPU se o PyTorch detectar CUDA; senão usa CPU.
+Abra `notebooks/03_mlp_mlflow.ipynb` e rode as células. Treino em GPU se o PyTorch detectar CUDA; senão usa CPU.
+
+## MLflow — onde grava e como abrir a UI
+
+Os notebooks apontam o tracking para **`mlruns/` na raiz deste repositório** (`file:.../tech_challenge_fase_01/mlruns`). Essa pasta é só na tua máquina — está no `.gitignore`, por isso quem clonar o repo precisa de **correr os notebooks outra vez** (ou copiar um `mlruns/` à parte se o grupo combinar isso).
+
+Experimentos definidos em `src/churn_prediction/config.py`:
+
+| Experimento | Notebook |
+|-------------|----------|
+| `telco_churn_baselines` | `02_baselines_mlflow.ipynb` |
+| `telco_churn_mlp` | `03_mlp_mlflow.ipynb` |
+
+Para ver métricas e parâmetros no browser, na **raiz** do projeto, com o venv ativo:
+
+```bash
+cd tech_challenge_fase_01
+python -m mlflow ui --backend-store-uri file:./mlruns
+```
+
+(`mlflow` pode não estar no PATH; por isso `python -m mlflow`.)
+
+Abre o URL que o comando imprimir (geralmente `http://127.0.0.1:5000`). Escolhe o experimento no menu **Experiments**. Os runs aparecem na vista de **Runs** ou em **Run evaluations**, conforme a versão da UI — **não** uses o separador **Traces** para isto (é outra funcionalidade; sem *tracing* manual fica vazio).
+
+Documentação escrita do projeto (métricas, limiar, model card, deploy, monitoramento) está em `docs/`; vale sincronizar números do MLflow com `docs/model_card.md` quando fecharem os runs.
 
 ## API (FastAPI)
 
@@ -81,6 +104,8 @@ uvicorn churn_prediction.api.app:app --reload --host 127.0.0.1 --port 8000
 - **`GET /health`** — `model_loaded` diz se o modelo foi encontrado ao arrancar.
 - **`POST /predict`** — corpo JSON com **todas** as colunas de entrada de uma linha de cliente; resposta com `probability_churn`, `threshold` (do `config`) e `predicted_churn`.
 - **`GET /docs`** — Swagger UI para experimentar o `POST /predict`.
+
+Os pedidos vão saindo no terminal em JSON (uma linha por pedido, com caminho, método, status e tempo em ms). O header `X-Process-Time-Ms` na resposta diz quanto demorou.
 
 Outra pasta: variável de ambiente **`CHURN_ARTIFACT_DIR`** a apontar para o diretório que tem `pipeline.joblib` e `meta.json`.
 

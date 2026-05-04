@@ -5,6 +5,7 @@ from __future__ import annotations
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
@@ -60,6 +61,28 @@ def pipeline_logistic(pre: ColumnTransformer) -> Pipeline:
                 LogisticRegression(
                     max_iter=2000,
                     random_state=RANDOM_SEED,
+                ),
+            ),
+        ]
+    )
+
+
+def pipeline_random_forest(pre: ColumnTransformer) -> Pipeline:
+    """Baseline não linear (árvores).
+
+    `n_jobs=1` no RF evita aninhar paralelismo com `cross_validate(..., n_jobs=-1)`.
+    """
+    return Pipeline(
+        [
+            ("prep", pre),
+            (
+                "clf",
+                RandomForestClassifier(
+                    n_estimators=120,
+                    max_depth=14,
+                    random_state=RANDOM_SEED,
+                    class_weight="balanced_subsample",
+                    n_jobs=1,
                 ),
             ),
         ]
