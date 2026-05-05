@@ -2,7 +2,7 @@
 
 Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLflow, MLP em PyTorch com runs no mesmo MLflow, API FastAPI a servir o pipeline de regressão logística exportado (o pré-processamento é o mesmo dos notebooks). Em `docs/` ficam o canvas, o doc de métricas e limiar, o model card, o texto de deploy (batch vs pedido) e o rascunho de monitoramento.
 
-**Vídeo STAR (YouTube):** [https://www.youtube.com/watch?v=JaT2zu1Al8Q](https://www.youtube.com/watch?v=JaT2zu1Al8Q) — guião em `docs/guia_video_star.md`.
+**Vídeo STAR (YouTube):** [https://www.youtube.com/watch?v=JaT2zu1Al8Q](https://www.youtube.com/watch?v=JaT2zu1Al8Q). Um guião de gravação (`docs/guia_video_star.md`) pode existir **só na tua máquina**: está no `.gitignore` e **não** faz parte do repositório público.
 
 ## Requisitos
 
