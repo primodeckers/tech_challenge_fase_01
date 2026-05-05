@@ -2,6 +2,8 @@
 
 Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLflow, MLP em PyTorch com runs no mesmo MLflow, API FastAPI a servir o pipeline de regressão logística exportado (o pré-processamento é o mesmo dos notebooks). Em `docs/` ficam o canvas, o doc de métricas e limiar, o model card, o texto de deploy (batch vs pedido) e o rascunho de monitoramento.
 
+**Vídeo STAR (YouTube):** [https://www.youtube.com/watch?v=JaT2zu1Al8Q](https://www.youtube.com/watch?v=JaT2zu1Al8Q) — guião em `docs/guia_video_star.md`.
+
 ## Requisitos
 
 Python **3.11** ou **3.12** costuma ser o mais seguro para o PyTorch. Se você estiver no 3.14 ou acima, veja no site do PyTorch se já há *wheel* para sua máquina. Git para versionar.
