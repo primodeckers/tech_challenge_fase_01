@@ -4,6 +4,8 @@ Churn em telecom: EDA no notebook, baselines e Random Forest no sklearn com MLfl
 
 **Vídeo STAR (YouTube):** [https://www.youtube.com/watch?v=JaT2zu1Al8Q](https://www.youtube.com/watch?v=JaT2zu1Al8Q). Um guião de gravação (`docs/guia_video_star.md`) pode existir **só na tua máquina**: está no `.gitignore` e **não** faz parte do repositório público.
 
+**Entrega com limite de upload na plataforma:** usa o ficheiro leve **`ENTREGA_RESUMO_LINKS.txt`** na raiz (resumo + documentação + links).
+
 ## Requisitos
 
 Python **3.11** ou **3.12** costuma ser o mais seguro para o PyTorch. Se você estiver no 3.14 ou acima, veja no site do PyTorch se já há *wheel* para sua máquina. Git para versionar.
