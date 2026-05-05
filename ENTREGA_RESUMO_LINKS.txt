@@ -1,0 +1,72 @@
+================================================================================
+TECH CHALLENGE — FASE 1 | RESUMO PARA ENTREGA (ficheiro leve)
+================================================================================
+Este ficheiro substitui o upload do projeto completo quando a plataforma tem
+limite de tamanho. O código, dados e documentação estão no GitHub (link abaixo).
+
+--------------------------------------------------------------------------------
+1) RESUMO DO PROJETO
+--------------------------------------------------------------------------------
+Objetivo: modelar churn (cancelamento) em telecomunicações com o dataset
+Telco Customer Churn (Excel), priorizando métricas adequadas à classe minoritária
+(PR-AUC, F1) e um limiar de decisão documentado (ver docs/metricas_e_limiar.md).
+
+Fluxo técnico:
+  • EDA e limpeza (Total Charges, remoção de leakage — ex. Churn Score, CLTV)
+  • Baselines Scikit-learn: Dummy, regressão logística, Random Forest; mesmo
+    pré-processamento (ColumnTransformer); validação cruzada estratificada;
+    tracking no MLflow (runs, métricas por fold, out-of-fold para F1 no limiar)
+  • MLP em PyTorch (notebook 03), early stopping, pos_weight; métricas no MLflow
+  • API FastAPI: GET /health, POST /predict; validação Pydantic; testes pytest;
+    modelo servido = pipeline sklearn exportado da regressão logística (rápido,
+    mesmo pré-processamento dos notebooks)
+  • Deploy opcional em Google Cloud Run (Docker); artefacto pipeline.joblib não
+    vai no Git — gerar com scripts/export_logistic_artifact.py antes do build
+
+--------------------------------------------------------------------------------
+2) PRINCIPAIS DOCUMENTAÇÕES (no repositório)
+--------------------------------------------------------------------------------
+  README.md                    Visão geral, setup, API, deploy
+  docs/ml_canvas.md            ML Canvas (negócio, dados, métricas, riscos)
+  docs/ml_canvas.html          Mesmo conteúdo para abrir no navegador
+  docs/metricas_e_limiar.md    Métricas, custo FP/FN, limiar
+  docs/model_card.md           Model card / limiar / limitações
+  docs/deploy_arquitetura.md   Justificativa batch vs API sob pedido
+  docs/deploy_cloud_run.md     Deploy GCP: comandos, validação, troubleshooting
+  docs/monitoramento.md        Métricas, alertas, falhas (rascunho)
+  examples/predict_sample.json Exemplo de corpo JSON para POST /predict
+
+--------------------------------------------------------------------------------
+3) ARQUITETURA (resumo)
+--------------------------------------------------------------------------------
+  [Cliente / Swagger]  --HTTPS-->  [Cloud Run: container FastAPI + uvicorn]
+                                         |
+                                         v
+                                   pipeline.joblib + meta.json
+                                   (CHURN_ARTIFACT_DIR=/app/models/churn_api)
+
+Desenvolvimento local: Jupyter (notebooks) + MLflow (mlruns/) + código em
+src/churn_prediction/ + testes em tests/.
+
+Produção (GCP): imagem Docker na Artifact Registry; serviço Cloud Run na
+região europe-west1; tráfego HTTPS gerido pelo Google; sem autenticação nas
+chamadas neste exercício.
+
+--------------------------------------------------------------------------------
+4) LINKS ESSENCIAIS
+--------------------------------------------------------------------------------
++---------------------------+--------------------------------------------------+
+| Recurso                   | URL                                              |
++---------------------------+--------------------------------------------------+
+| Repositório GitHub        | https://github.com/primodeckers/tech_challenge_fase_01 |
+| Vídeo STAR (YouTube)      | https://www.youtube.com/watch?v=JaT2zu1Al8Q      |
+| API deployada (Cloud Run) | https://churn-telco-api-169412920601.europe-west1.run.app |
++---------------------------+--------------------------------------------------+
+
+Complementos úteis (mesma API):
+  Swagger UI : https://churn-telco-api-169412920601.europe-west1.run.app/docs
+  Health     : https://churn-telco-api-169412920601.europe-west1.run.app/health
+
+================================================================================
+Fim do resumo — conferir datas e disponibilidade dos links antes da avaliação.
+================================================================================
